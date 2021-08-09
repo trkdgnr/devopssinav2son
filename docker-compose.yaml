@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  # Önce db servisini kuruyoruz ki wordpress depend ettiği için hata almayalım
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    # Kendime göre custom değerler verdim
+    environment:
+      MYSQL_ROOT_PASSWORD: tarikroot
+      MYSQL_DATABASE: dockercompose
+      MYSQL_USER: tarik
+      MYSQL_PASSWORD: tarik148
+  
+  # Şimdi de wordpress servisini kuruyoruz
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "3148:80"
+    restart: always
+    # Burada da üsttekiyle uyumlu değerler girdim
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: tarik
+      WORDPRESS_DB_PASSWORD: tarik148
+      WORDPRESS_DB_NAME: dockercompose
+
+volumes:
+  db_data: {}
+  wordpress_data: {}
